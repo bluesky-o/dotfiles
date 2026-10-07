@@ -3,3 +3,6 @@ __pycache__/
 *~
 .DS_Store
 hypr/.config/hypr/hyprland copy.lua
+
+.zsh_history
+.zhist*

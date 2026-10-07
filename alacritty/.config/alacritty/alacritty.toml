@@ -1,0 +1,72 @@
+[colors.primary]
+background = "#002B36" # base03
+foreground = "#839496" # base0
+
+[colors.cursor]
+cursor = "#839496"
+text = "#002B36"
+
+[colors.normal]
+black   = "#073642" # base02
+red     = "#DC322F"
+green   = "#859900"
+yellow  = "#B58900"
+blue    = "#268BD2"
+magenta = "#D33682"
+cyan    = "#2AA198"
+white   = "#EEE8D5" # base2
+
+[colors.bright]
+black   = "#002B36" # base03
+red     = "#CB4B16" # orange
+green   = "#586E75" # base01
+yellow  = "#657B83" # base00
+blue    = "#839496" # base0
+magenta = "#6C71C4" # violet
+cyan    = "#93A1A1" # base1
+white   = "#FDF6E3" # base3
+
+[font]
+size = 12
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.glyph_offset]
+x = 0
+y = 0
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.offset]
+x = 0
+y = 0
+
+[mouse]
+hide_when_typing = true
+
+[[mouse.bindings]]
+action = "PasteSelection"
+mouse = "Middle"
+
+[selection]
+semantic_escape_chars = ",│`|:\"' ()[]{}<>"
+
+[window]
+decorations = "full"
+dynamic_title = true
+startup_mode = "Maximized"
+
+[window.dimensions]
+columns = 160
+lines = 80
+
+[window.padding]
+x = 4
+y = 4

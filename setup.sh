@@ -4,7 +4,7 @@ command -v stow >/dev/null || { echo 'Install Stow first: sudo dnf install stow'
 repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 backup_dir="${HOME}/dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$backup_dir"
-targets=(.config/hypr .config/waybar .config/rofi .local/share/rofi/themes/spotlight-dark.rasi)
+targets=(.config/hypr .config/waybar .config/rofi .local/share/rofi/themes/spotlight-dark.rasi .config/alacritty/alacritty.toml .zshrc .config/zsh/.zshrc .p10k.zsh)
 for relative_path in "${targets[@]}"; do
     target_path="$HOME/$relative_path"
     if [[ -e "$target_path" || -L "$target_path" ]]; then
@@ -16,6 +16,6 @@ for relative_path in "${targets[@]}"; do
         mv -- "$target_path" "$backup_dir/$relative_path"
     fi
 done
-stow --dir="$repo_dir" --target="$HOME" --simulate --verbose hypr waybar rofi
-stow --dir="$repo_dir" --target="$HOME" --verbose hypr waybar rofi
+stow --dir="$repo_dir" --target="$HOME" --no-folding --simulate --verbose hypr waybar rofi alacritty zsh
+stow --dir="$repo_dir" --target="$HOME" --no-folding --verbose hypr waybar rofi alacritty zsh
 echo "Setup complete. Original files are in: $backup_dir"

@@ -1,6 +1,6 @@
 # Dotfiles
 
-Hyprland (Lua configuration), Waybar, and Rofi, managed with GNU Stow.
+Hyprland (Lua configuration), Waybar, Rofi, Alacritty, and Zsh, managed with GNU Stow.
 
 ## First setup on this computer
 
@@ -27,7 +27,7 @@ Editing files through `~/.config` edits their linked repository copies.
 ```sh
 cd ~/dotfiles
 git diff
-git add hypr waybar rofi README.md setup.sh .gitignore
+git add hypr waybar rofi alacritty zsh README.md setup.sh .gitignore
 git commit -m "Update configuration"
 git push
 ```
@@ -35,15 +35,18 @@ git push
 After adding files or pulling changes, refresh links with:
 
 ```sh
-stow --restow --target="$HOME" hypr waybar rofi
+stow --restow --target="$HOME" hypr waybar rofi alacritty zsh
 ```
 
 To remove the managed links, run:
 
 ```sh
-stow --delete --target="$HOME" hypr waybar rofi
+stow --delete --target="$HOME" hypr waybar rofi alacritty zsh
 ```
 
 Your original Rofi theme path currently includes `/home/green`; update it if
 installing under another username. Required fonts include JetBrainsMono Nerd
 Font Propo for Waybar and Montserrat for Rofi.
+
+Zsh includes `~/.zshrc`, `~/.config/zsh/.zshrc`, and `~/.p10k.zsh`.
+Shell history stays outside Git. Zsh also uses Zinit, fzf, and zoxide.
