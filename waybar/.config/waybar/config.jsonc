@@ -22,7 +22,7 @@
       "tooltip-format": "{controller_alias}\t{controller_address}",
       "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
       "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
-      "on-click": "exec alacritty --title=bluetui -e bluetui"
+      "on-click": "exec alacritty --title=bluetui -e /home/green/.cargo/bin/bluetui"
     },
     "cpu": {
         "interval": 10,
@@ -49,7 +49,7 @@
         "on-click": "exec nmrs"
     },
     "clock": {
-      "format": "󰥔 {:%a, %d. %b %I:%M %p}",
+      "format": "{:%a, %d. %b %I:%M %p}",
       "tooltip-format": "<tt><small>{calendar}</small></tt>",
       "calendar": {
         "format": {

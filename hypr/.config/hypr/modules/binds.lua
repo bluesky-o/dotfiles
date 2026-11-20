@@ -30,7 +30,9 @@ local closeWindowBind = hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 closeWindowBind:set_enabled(true)
 hl.bind(secondMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
--- hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd(
+    "bash -o pipefail -c 'cliphist list | rofi -dmenu -i -p Clipboard | cliphist decode | wl-copy'"
+))
 
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("python3 ~/.config/hypr/scripts/display-menu.py"))
 hl.bind(secondMod .. " + P", hl.dsp.window.pseudo())
