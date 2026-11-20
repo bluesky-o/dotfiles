@@ -2,6 +2,12 @@
 """Choose a temporary Hyprland display layout using Rofi."""
 import json
 import subprocess
+import fcntl
+import os
+from pathlib import Path
+import socket
+import sys
+import time
 
 
 def monitors():
@@ -59,6 +65,16 @@ def apply(choice):
 
 
 def main():
+    # Also start recovery for sessions that were already running when installed.
+    # The watcher's lock makes this safe when autostart already launched it.
+    log_dir = Path(os.environ.get("XDG_CACHE_HOME", str(Path.home() / ".cache")))
+    log_dir.mkdir(parents=True, exist_ok=True)
+    with open(log_dir / "display-recovery.log", "a") as log:
+        subprocess.Popen(
+            [sys.executable, str(Path(__file__).resolve()), "--watch"],
+            stdin=subprocess.DEVNULL, stdout=log, stderr=log,
+            start_new_session=True,
+        )
     options = ["Internal only", "External only", "Extend", "Duplicate"]
     menu = subprocess.run(
         ["rofi", "-dmenu", "-i", "-no-custom", "-p", "Display mode",
@@ -73,5 +89,58 @@ def main():
             subprocess.run(["notify-send", "Display selector", str(error)], check=False)
 
 
+def recover_internal():
+    outputs = monitors()
+    internal = [m for m in outputs
+                if m["name"].startswith(("eDP-", "LVDS-", "DSI-"))]
+    external = [m for m in outputs if m not in internal]
+    if external:
+        return
+    for output in internal:
+        if output.get("disabled", False):
+            configure(output["name"])
+
+
+def watch():
+    """Recover after unplugging the last external output, including startup."""
+    runtime = os.environ.get("XDG_RUNTIME_DIR")
+    instance = os.environ.get("HYPRLAND_INSTANCE_SIGNATURE")
+    if not runtime or not instance:
+        raise RuntimeError("Run the display watcher inside your Hyprland session.")
+    # A lock prevents duplicate watchers when manually starting after a reload.
+    with open(Path(runtime) / ("display-recovery-" + instance + ".lock"), "w") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as events:
+            events.connect(str(Path(runtime) / "hypr" / instance / ".socket2.sock"))
+            events.settimeout(2)
+            pending = b""
+            next_check = 0.0
+            while True:
+                if time.monotonic() >= next_check:
+                    try:
+                        recover_internal()
+                    except (subprocess.CalledProcessError, ValueError, RuntimeError) as error:
+                        print("Display recovery:", error, file=sys.stderr, flush=True)
+                    next_check = time.monotonic() + 2
+                try:
+                    chunk = events.recv(65536)
+                except socket.timeout:
+                    continue  # Also catches a disconnect during a menu switch.
+                if not chunk:
+                    return  # Compositor exited.
+                pending += chunk
+                lines = pending.split(b"\n")
+                pending = lines.pop()
+                if any(line.startswith((b"monitorremoved>>", b"monitorremovedv2>>"))
+                       for line in lines):
+                    next_check = 0.0
+
+
 if __name__ == "__main__":
-    main()
+    if "--watch" in sys.argv:
+        watch()
+    else:
+        main()
